@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>robot_kinematic_services</name>
+  <version>1.0.0</version>
+  <description>
+    Implements robot kinematic services (IK/FK) for ROS-compatible robots.
+  </description>
+  <author email="diogoa@kth.se">diogo</author>
+  <maintainer email="diogoa@kth.se">diogo</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>generic_control_toolbox</depend>
+</package>

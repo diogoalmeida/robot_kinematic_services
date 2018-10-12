@@ -1,0 +1,6 @@
+string chain_end_effector_name
+string tooltip_name
+geometry_msgs/PoseStamped desired_pose
+---
+robot_kinematic_services/SolverStatus status
+float64[] ik_solution

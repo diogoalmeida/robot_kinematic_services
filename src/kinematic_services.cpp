@@ -16,14 +16,13 @@ namespace robot_kinematic_services
 
   bool KinematicServices::loadParams()
   {
-    std::string base_link;
-    if (!nh_.getParam("robot_chain_base_link", base_link))
+    if (!nh_.getParam("robot_chain_base_link", base_link_))
     {
       ROS_ERROR("Missing robot_chain_base_link parameter");
       return false;
     }
 
-    kdl_manager_ = std::make_shared<generic_control_toolbox::KDLManager>(base_link, nh_);
+    kdl_manager_ = std::make_shared<generic_control_toolbox::KDLManager>(base_link_, nh_);
     return true;
   }
 
@@ -35,9 +34,7 @@ namespace robot_kinematic_services
       return true;
     }
 
-    KDL::Frame pose;
-    KDL::JntArray ik_solution;
-
+    // some robots do not produce the complete joint state information in each joint state message. Wait for a state message we can use
     sensor_msgs::JointState state = state_;
     while(!kdl_manager_->checkStateMessage(req.chain_end_effector_name, state))
     {
@@ -53,9 +50,37 @@ namespace robot_kinematic_services
 
     ROS_INFO_STREAM("Got a valid joint state for requested end-effector chain: " << req.chain_end_effector_name << ". Processing...");
 
-    // if pose request frame != chain base link, convert pose to chain base link
+    // if pose request is in frame != chain base link, convert pose to chain base link
+    geometry_msgs::PoseStamped pose_msg = req.desired_pose;
+    if (pose_msg.header.frame_id != base_link_)
+    {
+      int attempts;
+      for (attempts = 0; attempts < 5; attempts++)
+      {
+        try
+        {
+          listener_.transformPose(base_link_, pose_msg, pose_msg);
+          break;
+        }
+        catch (tf::TransformException ex)
+        {
+          ROS_WARN_STREAM("TF exception in kinematic services: " << ex.what());
+          ros::Duration(0.1).sleep();
+        }
+      }
 
-    tf::poseMsgToKDL(req.desired_pose.pose, pose);
+      if (attempts >= 5)
+      {
+        ROS_ERROR_STREAM("Kinematic services could not find the transform between frames " << base_link_ << " and " << pose_msg.header.frame_id);
+        res.status.code = res.status.TF_FAILURE;
+        return true;
+      }
+    }
+
+    KDL::Frame pose;
+    KDL::JntArray ik_solution;
+    tf::poseMsgToKDL(pose_msg.pose, pose);
+
     if (!kdl_manager_->getGrippingPoseIK(req.chain_end_effector_name, state, pose, ik_solution))
     {
       res.status.code = res.status.IK_FAILURE;

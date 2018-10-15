@@ -2,4 +2,4 @@ int16 code
 int16 SUCCESS = 0
 int16 IK_FAILURE = -1
 int16 INPUT_FAILURE = -2
-int16 IK_TIMEOUT = -3
+int16 TF_FAILURE = -3

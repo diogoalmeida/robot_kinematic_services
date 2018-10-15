@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <generic_control_toolbox/kdl_manager.hpp>
+#include <tf/transform_listener.h>
 #include <robot_kinematic_services/InverseKinematics.h>
 #include <robot_kinematic_services/ForwardKinematics.h>
 
@@ -23,8 +24,10 @@ namespace robot_kinematic_services
     void stateCallback(const sensor_msgs::JointState::ConstPtr& msg);
   private:
     ros::NodeHandle nh_;
+    std::string base_link_;
     sensor_msgs::JointState state_;
     ros::Subscriber state_sub_;
+    tf::TransformListener listener_;
     std::shared_ptr<generic_control_toolbox::KDLManager> kdl_manager_;
 
     /**

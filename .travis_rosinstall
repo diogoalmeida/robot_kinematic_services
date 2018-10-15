@@ -1,0 +1,4 @@
+# travis
+- git:
+    local-name: generic_control_toolbox
+    uri: https://github.com/diogoalmeida/generic_control_toolbox.git

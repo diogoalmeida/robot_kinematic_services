@@ -1,4 +1,4 @@
-Robot Kinematic Services
+Robot Kinematic Services [![Build Status](https://travis-ci.org/diogoalmeida/robot_kinematic_services.svg?branch=master)](https://travis-ci.org/diogoalmeida/robot_kinematic_services)
 ===
 This package implements ROS services for computing the forward and inverse kinematics (resp. FK and IK) for a robot kinematic chain. It loads your robot's URDF description and allows you to compute
 the kinematics for a given chain end-effector or any point rigidly attached to it (e.g., a tooltip).

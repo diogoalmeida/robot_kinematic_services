@@ -3,7 +3,7 @@ Robot Kinematic Services
 This package implements ROS services for computing the forward and inverse kinematics (resp. FK and IK) for a robot kinematic chain. It loads your robot's URDF description and allows you to compute
 the kinematics for a given chain end-effector or any point rigidly attached to it (e.g., a tooltip).
 
-###Usage
+### Usage
 This package assumes that the robot kinematic description is available at the `/robot_description` rosparameter. The fk and ik services are available, respectively, as `compute_fk` and `compute_ik`. These values can be remaped in the launch file.
 
 A single parameter is used, `robot_chain_base_link`, which should be set for the base link name of your robot kinematic chain. A minimal launch file is provided in this package, where this parameter is set to the base like of the fetch manipulator, `torso_lift_link`:
@@ -65,7 +65,7 @@ ik_solution: [-1.6031114799568484, -0.3187570069269499, -2.5669119402583984, -1.
 
 Note that the pose can be expressed with respect to any desired frame, not necessarily the `robot_chain_base_link`.
 
-###Installation
+### Installation
 This packages uses the `KDL_manager` of the [generic_control_toolbox](https://github.com/diogoalmeida/generic_control_toolbox) to compute the kinematic solutions. You can use the `trac-ik` branch of that package to improve the quality of the IK results. It has been tested in ROS Indigo, but should work in recent distros as well.
 
 Example workspace configuration:

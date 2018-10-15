@@ -1,0 +1,8 @@
+kdl_manager:
+  eps: 0.01
+  max_tf_attempts: 10
+  ikvel_solver: nso
+  nso_weight: 0
+  ik_angle_tolerance: 0.01
+  ik_pos_tolerance: 0.005
+  gravity_in_base_link: [0, 0, -9.8]

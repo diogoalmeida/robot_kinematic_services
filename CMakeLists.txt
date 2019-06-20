@@ -16,6 +16,7 @@ link_directories(${catkin_LIBRARY_DIRS})
 add_message_files(
   FILES
   SolverStatus.msg
+  Solution.msg
 )
 
 add_service_files(

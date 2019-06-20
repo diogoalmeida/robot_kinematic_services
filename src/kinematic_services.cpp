@@ -33,7 +33,6 @@ bool KinematicServices::ikCallback(InverseKinematics::Request& req,
 {
   if (!processRequestCommon(req.chain_end_effector_name, req.tooltip_name))
   {
-    res.status.code = res.status.INPUT_FAILURE;
     return true;
   }
 
@@ -55,53 +54,65 @@ bool KinematicServices::ikCallback(InverseKinematics::Request& req,
   ROS_INFO_STREAM("Got a valid joint state for requested end-effector chain: "
                   << req.chain_end_effector_name << ". Processing...");
 
-  // if pose request is in frame != chain base link, convert pose to chain base
-  // link
-  geometry_msgs::PoseStamped pose_msg = req.desired_pose;
-  if (pose_msg.header.frame_id != base_link_)
+  std::vector<Solution> sols;
+
+  for (unsigned int i = 0; i < req.desired_poses.size(); i++)
   {
-    int attempts;
-    for (attempts = 0; attempts < 5; attempts++)
+    // if pose request is in frame != chain base link, convert pose to chain
+    // base link
+    geometry_msgs::PoseStamped pose_msg = req.desired_poses[i];
+    Solution sol;
+    if (pose_msg.header.frame_id != base_link_)
     {
-      try
+      int attempts;
+      for (attempts = 0; attempts < 5; attempts++)
       {
-        listener_.transformPose(base_link_, pose_msg, pose_msg);
-        break;
+        try
+        {
+          listener_.transformPose(base_link_, pose_msg, pose_msg);
+          break;
+        }
+        catch (tf::TransformException ex)
+        {
+          ROS_WARN_STREAM("TF exception in kinematic services: " << ex.what());
+          ros::Duration(0.1).sleep();
+        }
       }
-      catch (tf::TransformException ex)
+
+      if (attempts >= 5)
       {
-        ROS_WARN_STREAM("TF exception in kinematic services: " << ex.what());
-        ros::Duration(0.1).sleep();
+        ROS_ERROR_STREAM(
+            "Kinematic services could not find the transform between frames "
+            << base_link_ << " and " << pose_msg.header.frame_id);
+        sol.status.code = sol.status.TF_FAILURE;
+        sols.push_back(sol);
+        continue;
       }
     }
 
-    if (attempts >= 5)
+    KDL::Frame pose;
+    KDL::JntArray ik_solution;
+    tf::poseMsgToKDL(pose_msg.pose, pose);
+
+    if (!kdl_manager_->getGrippingPoseIK(req.chain_end_effector_name, state,
+                                         pose, ik_solution))
     {
-      ROS_ERROR_STREAM(
-          "Kinematic services could not find the transform between frames "
-          << base_link_ << " and " << pose_msg.header.frame_id);
-      res.status.code = res.status.TF_FAILURE;
-      return true;
+      sol.status.code = sol.status.IK_FAILURE;
+      sols.push_back(sol);
+      continue;
     }
+
+    for (int i = 0; i < ik_solution.rows(); i++)
+    {
+      sol.ik_solution.push_back(ik_solution(i));
+    }
+    sol.status.code = sol.status.SUCCESS;
+
+    sols.push_back(sol);
   }
 
-  KDL::Frame pose;
-  KDL::JntArray ik_solution;
-  tf::poseMsgToKDL(pose_msg.pose, pose);
+  res.sols = sols;
 
-  if (!kdl_manager_->getGrippingPoseIK(req.chain_end_effector_name, state, pose,
-                                       ik_solution))
-  {
-    res.status.code = res.status.IK_FAILURE;
-    return true;
-  }
-
-  for (int i = 0; i < ik_solution.rows(); i++)
-  {
-    res.ik_solution.push_back(ik_solution(i));
-  }
-
-  res.status.code = res.status.SUCCESS;
   return true;
 }
 

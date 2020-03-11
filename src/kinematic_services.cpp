@@ -8,8 +8,10 @@ KinematicServices::KinematicServices() : nh_("~")
   {
     throw std::runtime_error("ERROR getting Kinematic services parameters");
   }
-
-  state_sub_ = nh_.subscribe("/joint_states", 1000,
+  std::string ns = ros::this_node::getNamespace();
+  std::string joint_states_topic = ns + "/joint_states";
+  ROS_INFO_STREAM("Listening to joint_states messages on topic: " << joint_states_topic);
+  state_sub_ = nh_.subscribe(joint_states_topic, 1000,
                              &KinematicServices::stateCallback, this);
 }
 
@@ -181,10 +183,10 @@ int main(int argc, char** argv)
   robot_kinematic_services::KinematicServices service_handler;
 
   ros::ServiceServer ik_server = nh.advertiseService(
-      "/compute_ik", &robot_kinematic_services::KinematicServices::ikCallback,
+      "compute_ik", &robot_kinematic_services::KinematicServices::ikCallback,
       &service_handler);
   ros::ServiceServer fk_server = nh.advertiseService(
-      "/compute_fk", &robot_kinematic_services::KinematicServices::fkCallback,
+      "compute_fk", &robot_kinematic_services::KinematicServices::fkCallback,
       &service_handler);
 
   ROS_INFO("Kinematic services node is ready");

@@ -2,7 +2,7 @@
   <node name="kinematic_services" type="kinematic_services" pkg="robot_kinematic_services" output="screen">
     <rosparam file="$(find robot_kinematic_services)/config/solver.yaml" command="load"/>
     <rosparam>
-      robot_chain_base_link: torso_lift_link
+      robot_chain_base_link: base_link
     </rosparam>
   </node>
 </launch>

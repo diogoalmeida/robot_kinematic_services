@@ -8,9 +8,10 @@ KinematicServices::KinematicServices() : nh_("~")
   {
     throw std::runtime_error("ERROR getting Kinematic services parameters");
   }
-  std::string ns = ros::this_node::getNamespace();
-  std::string joint_states_topic = ns + "/joint_states";
-  ROS_INFO_STREAM("Listening to joint_states messages on topic: " << joint_states_topic);
+
+  std::string joint_states_topic = nh_.resolveName("/joint_states");
+  ROS_INFO_STREAM(
+      "Listening to joint_states messages on topic: " << joint_states_topic);
   state_sub_ = nh_.subscribe(joint_states_topic, 1000,
                              &KinematicServices::stateCallback, this);
 }

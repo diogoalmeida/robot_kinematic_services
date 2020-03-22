@@ -6,3 +6,5 @@ kdl_manager:
   ik_angle_tolerance: 0.01
   ik_pos_tolerance: 0.005
   gravity_in_base_link: [0, 0, -9.8]
+
+robot_chain_base_link: base

@@ -45,3 +45,9 @@ include_directories(
 add_executable(kinematic_services src/kinematic_services.cpp)
 target_link_libraries(kinematic_services ${catkin_LIBRARIES})
 add_dependencies(kinematic_services ${catkin_EXPORTED_TARGETS} ${${PROJECT_NAME}_EXPORTED_TARGETS})
+
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_kinematic_services test/test_kinematic_services.test test/test_kinematic_services.cpp)
+  target_link_libraries(test_kinematic_services ${catkin_LIBRARIES})
+endif()

@@ -188,8 +188,8 @@ int main(int argc, char** argv)
       &service_handler);
 
   ROS_INFO("Kinematic services node is ready");
-  ros::MultiThreadedSpinner spinner(
-      3);  // so that we can process state message callbacks while waiting in a
-           // service callback
+  // so that we can process state message callbacks while waiting in a
+  // service callback
+  ros::MultiThreadedSpinner spinner(3);
   spinner.spin();
 }

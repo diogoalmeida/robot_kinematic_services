@@ -15,4 +15,5 @@
   <depend>geometry_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>generic_control_toolbox</depend>
+  <test_depend>rostest</test_depend>
 </package>

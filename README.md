@@ -10,7 +10,7 @@ A single parameter is used, `robot_chain_base_link`, which should be set for the
 
 ```xml
 <launch>
-  <node name="kinematic_services" type="kinematic_services" pkg="robot_kinematic_services" output="screen">
+  <node name="kinematic_services" type="kinematic_services" pkg="robot_kinematic_services" output="screen" ns="my_custom_namespace">
     <rosparam>
       robot_chain_base_link: torso_lift_link
     </rosparam>

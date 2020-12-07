@@ -22,13 +22,9 @@ If you want different names for the provided services, that can be achieved as i
 
 ```xml
 <launch>
-  <node name="kinematic_services" type="kinematic_services" pkg="robot_kinematic_services" output="screen">
-    <remap from="compute_fk" to="forward_kinematics"/>
-    <remap from="compute_ik" to="inverse_kinematics"/>
-    <rosparam>
-      robot_chain_base_link: torso_lift_link
-    </rosparam>
-  </node>
+    <node name="kinematic_services" type="kinematic_services" pkg="robot_kinematic_services" output="screen" ns="my_custom_namespace">
+        <rosparam file="$(find robot_kinematic_services)/config/solver.yaml" command="load"/>
+    </node>
 </launch>
 ```
 
